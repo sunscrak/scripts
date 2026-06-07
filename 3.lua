@@ -61,15 +61,6 @@ CopyButton.MouseButton1Click:Connect(function()
     setclipboard(CoordsDisplay.Text)
 end)
 
--- Credits Label
-local CreditsLabel = Instance.new("TextLabel")
-CreditsLabel.Size = UDim2.new(1, 0, 0, 15)
-CreditsLabel.Position = UDim2.new(0, 0, 1, -15)
-CreditsLabel.Text = "discord.gg/bYv78Z696w" -- Decrypted credit link
-CreditsLabel.TextColor3 = Color3.new(0.5, 0.5, 0.5)
-CreditsLabel.BackgroundTransparency = 1
-CreditsLabel.Parent = MainFrame
-
 -- Live Update Loop
 RunService.RenderStepped:Connect(function()
     if HumanoidRootPart then

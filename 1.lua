@@ -1,12 +1,15 @@
 local ContextActionService = game:GetService("ContextActionService")
+local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
-local SNAP_ANGLE = math.rad(45) -- 45 degrees in radians
-local Camera = Workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+local SNAP_ANGLE = math.rad(45)
 
 local function handleCameraSnap(actionName, inputState, inputObject)
-    -- Only trigger on the initial key press down
     if inputState ~= Enum.UserInputState.Begin then return end
+    
+    local Camera = Workspace.CurrentCamera
+    if not Camera then return Enum.ContextActionResult.Sink end
     
     if actionName == "SnapLeft" then
         Camera.CFrame = Camera.CFrame * CFrame.Angles(0, SNAP_ANGLE, 0)
@@ -14,10 +17,32 @@ local function handleCameraSnap(actionName, inputState, inputObject)
         Camera.CFrame = Camera.CFrame * CFrame.Angles(0, -SNAP_ANGLE, 0)
     end
     
-    -- Crucial: Returns ContextActionResult.Sink to block Roblox's default Emote menu
     return Enum.ContextActionResult.Sink
 end
 
--- Bind the keys and force them to override default game actions
-ContextActionService:BindAction("SnapLeft", handleCameraSnap, false, Enum.KeyCode.Comma)
-ContextActionService:BindAction("SnapRight", handleCameraSnap, false, Enum.KeyCode.Period)
+local function bindKeys()
+    ContextActionService:UnbindAction("SnapLeft")
+    ContextActionService:UnbindAction("SnapRight")
+    
+    ContextActionService:BindActionAtPriority(
+        "SnapLeft", 
+        handleCameraSnap, 
+        false, 
+        Enum.ContextActionPriority.High.Value, 
+        Enum.KeyCode.Comma
+    )
+    ContextActionService:BindActionAtPriority(
+        "SnapRight", 
+        handleCameraSnap, 
+        false, 
+        Enum.ContextActionPriority.High.Value, 
+        Enum.KeyCode.Period
+    )
+end
+
+LocalPlayer.CharacterAdded:Connect(function()
+    task.wait(0.5)
+    bindKeys()
+end)
+
+bindKeys()
